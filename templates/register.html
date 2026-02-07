@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Transcript Evaluator{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>User Management</h1>
+        <p>Add new team members to the system</p>
+    </div>
+
+    <div class="content-grid">
+        <div class="card">
+            <div class="card-header">
+                <h2>Add New User</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required
+                               placeholder="Enter username" minlength="3">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required
+                               placeholder="Enter password" minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                               placeholder="Confirm password" minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_admin">
+                            <span class="checkbox-text">Grant administrator privileges</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Create User
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Existing Users</h2>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user['username'] }}</td>
+                            <td>
+                                {% if user['is_admin'] %}
+                                <span class="badge badge-admin">Admin</span>
+                                {% else %}
+                                <span class="badge badge-user">User</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user['created_at'][:10] if user['created_at'] else 'N/A' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">No users found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

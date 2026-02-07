@@ -1,0 +1,536 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluate Transcripts - Transcript Evaluator{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>Transcript Evaluation</h1>
+        <p>Upload your transcript files to compare against the gold standard</p>
+    </div>
+
+    <div class="upload-container">
+        <form id="evaluationForm" class="evaluation-form" enctype="multipart/form-data">
+            <div class="form-section">
+                <h3>File Upload</h3>
+                <div class="file-upload-grid">
+                    <div class="file-upload-box">
+                        <label for="human_file" class="file-label">
+                            <div class="file-icon">&#128196;</div>
+                            <span class="file-title">Human Annotated File</span>
+                            <span class="file-hint">Trainee transcript (.txt)</span>
+                            <input type="file" id="human_file" name="human_file" accept=".txt" required>
+                            <span class="file-name" id="human_file_name">No file selected</span>
+                        </label>
+                    </div>
+                    <div class="file-upload-box">
+                        <label for="gold_file" class="file-label">
+                            <div class="file-icon">&#127942;</div>
+                            <span class="file-title">Gold Standard File</span>
+                            <span class="file-hint">Reference transcript (.txt)</span>
+                            <input type="file" id="gold_file" name="gold_file" accept=".txt" required>
+                            <span class="file-name" id="gold_file_name">No file selected</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Language</h3>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="language" value="English" checked>
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">English</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="language" value="Spanish">
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">Spanish</span>
+                    </label>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="normalize_diacritics" id="normalize_diacritics">
+                        <span class="checkbox-text">Normalize diacritics (recommended for Spanish)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Speaker Selection</h3>
+                <div class="speaker-controls">
+                    <button type="button" class="btn btn-sm btn-secondary" id="selectAllSpeakers">Select All</button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="deselectAllSpeakers">Deselect All</button>
+                </div>
+                <div class="speaker-grid">
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="FA1" checked>
+                        <span class="checkbox-text">FA1</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="FA2">
+                        <span class="checkbox-text">FA2</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="MA1">
+                        <span class="checkbox-text">MA1</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="MA2">
+                        <span class="checkbox-text">MA2</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="CHI">
+                        <span class="checkbox-text">CHI</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="MC1">
+                        <span class="checkbox-text">MC1</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="MC2">
+                        <span class="checkbox-text">MC2</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="FC1">
+                        <span class="checkbox-text">FC1</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="FC2">
+                        <span class="checkbox-text">FC2</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="UC1">
+                        <span class="checkbox-text">UC1</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="UC2">
+                        <span class="checkbox-text">UC2</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="INV">
+                        <span class="checkbox-text">INV</span>
+                    </label>
+                    <label class="checkbox-label speaker-checkbox">
+                        <input type="checkbox" name="speakers" value="EXP">
+                        <span class="checkbox-text">EXP</span>
+                    </label>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="custom_speakers">Custom Speakers (comma-separated)</label>
+                    <input type="text" id="custom_speakers" name="custom_speakers"
+                           placeholder="e.g., SPEAKER1, SPEAKER2">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Evaluation Mode</h3>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="eval_mode" value="time" checked>
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">Time-based</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="eval_mode" value="utterance">
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">Utterance-based</span>
+                    </label>
+                </div>
+
+                <div id="timeBasedOptions" class="mode-options">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="min_onset">Min Onset (ms)</label>
+                            <input type="number" id="min_onset" name="min_onset" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="max_offset">Max Offset (ms)</label>
+                            <input type="number" id="max_offset" name="max_offset" value="59999" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="utteranceBasedOptions" class="mode-options" style="display: none;">
+                    <div class="form-group">
+                        <label for="max_utterances">Max Utterances</label>
+                        <input type="number" id="max_utterances" name="max_utterances"
+                               placeholder="Leave empty for all" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                    <span class="btn-text">Evaluate Transcripts</span>
+                    <span class="btn-loading" style="display: none;">
+                        <span class="spinner"></span> Processing...
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="resultsContainer" class="results-container" style="display: none;">
+        <!-- Results will be dynamically inserted here -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // File input display
+    document.getElementById('human_file').addEventListener('change', function(e) {
+        document.getElementById('human_file_name').textContent =
+            e.target.files[0] ? e.target.files[0].name : 'No file selected';
+    });
+
+    document.getElementById('gold_file').addEventListener('change', function(e) {
+        document.getElementById('gold_file_name').textContent =
+            e.target.files[0] ? e.target.files[0].name : 'No file selected';
+    });
+
+    // Language selection - auto-check diacritics for Spanish
+    document.querySelectorAll('input[name="language"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.getElementById('normalize_diacritics').checked = (this.value === 'Spanish');
+        });
+    });
+
+    // Speaker select/deselect all
+    document.getElementById('selectAllSpeakers').addEventListener('click', function() {
+        document.querySelectorAll('input[name="speakers"]').forEach(function(cb) {
+            cb.checked = true;
+        });
+    });
+
+    document.getElementById('deselectAllSpeakers').addEventListener('click', function() {
+        document.querySelectorAll('input[name="speakers"]').forEach(function(cb) {
+            cb.checked = false;
+        });
+    });
+
+    // Evaluation mode toggle
+    document.querySelectorAll('input[name="eval_mode"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.getElementById('timeBasedOptions').style.display =
+                (this.value === 'time') ? 'block' : 'none';
+            document.getElementById('utteranceBasedOptions').style.display =
+                (this.value === 'utterance') ? 'block' : 'none';
+        });
+    });
+
+    // Form submission
+    document.getElementById('evaluationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+
+        // Show loading state
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline-flex';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/evaluate', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert('Error: ' + data.error);
+            } else {
+                displayResults(data);
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        } finally {
+            // Reset button state
+            btnText.style.display = 'inline';
+            btnLoading.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    });
+});
+
+function displayResults(data) {
+    const container = document.getElementById('resultsContainer');
+    container.style.display = 'block';
+    container.innerHTML = '';
+
+    // Scroll to results
+    container.scrollIntoView({ behavior: 'smooth' });
+
+    // Create results header
+    const header = document.createElement('div');
+    header.className = 'results-header';
+    header.innerHTML = `
+        <h2>Evaluation Results</h2>
+        <p>${data.results.length} speaker(s) evaluated</p>
+    `;
+    container.appendChild(header);
+
+    // Create tabs for multiple speakers
+    if (data.results.length > 1) {
+        const tabs = document.createElement('div');
+        tabs.className = 'speaker-tabs';
+        data.results.forEach((result, index) => {
+            const tab = document.createElement('button');
+            tab.className = 'speaker-tab' + (index === 0 ? ' active' : '');
+            tab.textContent = result.speaker;
+            tab.onclick = () => showSpeakerResult(index);
+            tabs.appendChild(tab);
+        });
+        container.appendChild(tabs);
+    }
+
+    // Create result panels for each speaker
+    const panelsContainer = document.createElement('div');
+    panelsContainer.id = 'speakerPanels';
+    container.appendChild(panelsContainer);
+
+    data.results.forEach((result, index) => {
+        const panel = createResultPanel(result, data.reports[result.speaker], index === 0);
+        panelsContainer.appendChild(panel);
+    });
+
+    // Initialize charts for first speaker
+    if (data.results.length > 0) {
+        initializeCharts(data.results[0], 0);
+    }
+}
+
+function showSpeakerResult(index) {
+    // Update tabs
+    document.querySelectorAll('.speaker-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+    });
+
+    // Update panels
+    document.querySelectorAll('.result-panel').forEach((panel, i) => {
+        panel.style.display = (i === index) ? 'block' : 'none';
+    });
+
+    // Reinitialize charts for this speaker
+    const results = window.evaluationResults;
+    if (results && results[index]) {
+        initializeCharts(results[index], index);
+    }
+}
+
+function createResultPanel(result, reports, isVisible) {
+    const panel = document.createElement('div');
+    panel.className = 'result-panel';
+    panel.style.display = isVisible ? 'block' : 'none';
+
+    // Store result for chart initialization
+    if (!window.evaluationResults) window.evaluationResults = [];
+    window.evaluationResults.push(result);
+
+    const accuracyClass = result.accuracy >= 90 ? 'good' : (result.accuracy >= 70 ? 'warning' : 'error');
+    const werClass = result.wer < 10 ? 'good' : (result.wer < 30 ? 'warning' : 'error');
+    const cerClass = result.cer < 10 ? 'good' : (result.cer < 30 ? 'warning' : 'error');
+
+    panel.innerHTML = `
+        <div class="result-info">
+            <div class="info-badge">Speaker: ${result.speaker}</div>
+            <div class="info-badge">Language: ${result.language}</div>
+            <div class="info-badge">Gold Utterances: ${result.gold_utterances_count}</div>
+            <div class="info-badge">Human Utterances: ${result.human_utterances_count}</div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card ${accuracyClass}">
+                <div class="metric-label">Accuracy</div>
+                <div class="metric-value">${result.accuracy.toFixed(2)}%</div>
+                <div class="metric-subtext">${result.hits} correct words</div>
+            </div>
+            <div class="metric-card ${werClass}">
+                <div class="metric-label">Word Error Rate</div>
+                <div class="metric-value">${result.wer.toFixed(2)}%</div>
+                <div class="metric-subtext">Lower is better</div>
+            </div>
+            <div class="metric-card ${cerClass}">
+                <div class="metric-label">Character Error Rate</div>
+                <div class="metric-value">${result.cer.toFixed(2)}%</div>
+                <div class="metric-subtext">Lower is better</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Word Info Preserved</div>
+                <div class="metric-value">${result.wip.toFixed(2)}%</div>
+                <div class="metric-subtext">Higher is better</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Error Distribution</h3>
+                <canvas id="errorChart${window.evaluationResults.length - 1}"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Performance Metrics</h3>
+                <canvas id="metricsChart${window.evaluationResults.length - 1}"></canvas>
+            </div>
+        </div>
+
+        <div class="detail-sections">
+            <div class="detail-section">
+                <button class="collapsible">Correct Words (${result.alignment_details.hits.length})</button>
+                <div class="collapsible-content">
+                    <div class="word-list hits-list">
+                        ${result.alignment_details.hits.slice(0, 100).map((word, i) =>
+                            `<span class="word-item hit">${word}</span>`
+                        ).join('')}
+                        ${result.alignment_details.hits.length > 100 ?
+                            `<span class="more-indicator">... and ${result.alignment_details.hits.length - 100} more</span>` : ''}
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <button class="collapsible">Substitutions (${result.alignment_details.substitutions.length})</button>
+                <div class="collapsible-content">
+                    <div class="error-list">
+                        ${result.alignment_details.substitutions.map(([ref, hyp], i) =>
+                            `<div class="error-item substitution">
+                                <span class="error-num">${i + 1}.</span>
+                                <span class="ref-word">'${ref}'</span>
+                                <span class="arrow">&#8594;</span>
+                                <span class="hyp-word">'${hyp}'</span>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <button class="collapsible">Deletions (${result.alignment_details.deletions.length})</button>
+                <div class="collapsible-content">
+                    <div class="word-list deletions-list">
+                        ${result.alignment_details.deletions.map((word, i) =>
+                            `<span class="word-item deletion">${word}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <button class="collapsible">Insertions (${result.alignment_details.insertions.length})</button>
+                <div class="collapsible-content">
+                    <div class="word-list insertions-list">
+                        ${result.alignment_details.insertions.map((word, i) =>
+                            `<span class="word-item insertion">${word}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-comparison">
+            <div class="text-box">
+                <h3>Reference (Gold Standard)</h3>
+                <pre>${result.ref_text}</pre>
+            </div>
+            <div class="text-box">
+                <h3>Hypothesis (Human)</h3>
+                <pre>${result.hyp_text}</pre>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h3>Download Reports</h3>
+            <div class="download-buttons">
+                <a href="/download/${reports.txt}" class="btn btn-secondary" download>
+                    Download TXT Report
+                </a>
+                <a href="/download/${reports.html}" class="btn btn-primary" download>
+                    Download HTML Report
+                </a>
+            </div>
+        </div>
+    `;
+
+    // Add collapsible functionality
+    setTimeout(() => {
+        panel.querySelectorAll('.collapsible').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+    }, 0);
+
+    return panel;
+}
+
+function initializeCharts(result, index) {
+    // Error Distribution Chart
+    const errorCtx = document.getElementById(`errorChart${index}`);
+    if (errorCtx) {
+        new Chart(errorCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Correct', 'Substitutions', 'Deletions', 'Insertions'],
+                datasets: [{
+                    data: [result.hits, result.substitutions, result.deletions, result.insertions],
+                    backgroundColor: ['#48bb78', '#f56565', '#ed8936', '#4299e1'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 15, font: { size: 12 } }
+                    }
+                }
+            }
+        });
+    }
+
+    // Performance Metrics Chart
+    const metricsCtx = document.getElementById(`metricsChart${index}`);
+    if (metricsCtx) {
+        new Chart(metricsCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Accuracy', 'WER', 'CER', 'WIP'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [result.accuracy, result.wer, result.cer, result.wip],
+                    backgroundColor: ['#48bb78', '#f56565', '#ed8936', '#667eea'],
+                    borderWidth: 1,
+                    borderColor: '#2d3748'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) { return value + '%'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
