@@ -15,21 +15,21 @@
                 <h3>File Upload</h3>
                 <div class="file-upload-grid">
                     <div class="file-upload-box">
-                        <label for="human_file" class="file-label">
-                            <div class="file-icon">&#128196;</div>
-                            <span class="file-title">Human Annotated File</span>
-                            <span class="file-hint">Trainee transcript (.txt)</span>
-                            <input type="file" id="human_file" name="human_file" accept=".txt" required>
-                            <span class="file-name" id="human_file_name">No file selected</span>
-                        </label>
-                    </div>
-                    <div class="file-upload-box">
                         <label for="gold_file" class="file-label">
                             <div class="file-icon">&#127942;</div>
                             <span class="file-title">Gold Standard File</span>
                             <span class="file-hint">Reference transcript (.txt)</span>
                             <input type="file" id="gold_file" name="gold_file" accept=".txt" required>
                             <span class="file-name" id="gold_file_name">No file selected</span>
+                        </label>
+                    </div>
+                    <div class="file-upload-box">
+                        <label for="human_file" class="file-label">
+                            <div class="file-icon">&#128196;</div>
+                            <span class="file-title">Human Annotated File</span>
+                            <span class="file-hint">Trainee transcript (.txt)</span>
+                            <input type="file" id="human_file" name="human_file" accept=".txt" required>
+                            <span class="file-name" id="human_file_name">No file selected</span>
                         </label>
                     </div>
                 </div>
@@ -49,6 +49,7 @@
                         <span class="radio-text">Spanish</span>
                     </label>
                 </div>
+                <p class="form-note" style="margin-top: 10px; font-size: 0.9em; color: #a0aec0; font-style: italic;">Note: If the transcript contains both Spanish and English, select Spanish.</p>
                 <div class="form-group" style="margin-top: 15px;">
                     <label class="checkbox-label">
                         <input type="checkbox" name="normalize_diacritics" id="normalize_diacritics">
@@ -150,6 +151,7 @@
                             <input type="number" id="max_offset" name="max_offset" value="59999" min="0">
                         </div>
                     </div>
+                    <p class="form-note" style="margin-top: 8px; font-size: 0.85em; color: #a0aec0;">Reference: 1 min = 60000 ms, 5 min = 300000 ms</p>
                 </div>
 
                 <div id="utteranceBasedOptions" class="mode-options" style="display: none;">
