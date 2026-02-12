@@ -899,8 +899,75 @@ body {
 /* Footer */
 .footer {
     text-align: center;
-    padding: 25px;
-    color: rgba(255, 255, 255, 0.8);
+    color: white;
+    margin: 30px 30px 20px;
+    padding: 30px 30px 24px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    border-radius: 2px;
+}
+
+.footer-brand {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.footer-credit {
+    font-size: 13px;
+    opacity: 0.75;
+    margin-top: 8px;
+    transition: opacity 0.3s;
+}
+
+.footer-credit:hover {
+    opacity: 1;
+}
+
+.footer-heart {
+    display: inline-block;
+    color: #ff6b9d;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.footer-divider {
+    width: 40px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 12px auto;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    transition: border-color 0.3s;
+}
+
+.footer a:hover {
+    border-bottom-color: white;
 }
 
 /* Utilities */

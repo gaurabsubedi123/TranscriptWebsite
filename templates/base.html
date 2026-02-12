@@ -12,7 +12,7 @@
     {% if current_user.is_authenticated %}
     <nav class="navbar">
         <div class="nav-brand">
-            <span class="nav-logo">&#128202;</span>
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height: 36px; vertical-align: middle;" onerror="this.style.display='none'">
             Transcript Evaluator
         </div>
         <div class="nav-links">
@@ -52,7 +52,9 @@
     </main>
 
     <footer class="footer">
-        <p>Transcript Evaluation Tool</p>
+        <p class="footer-brand">&copy; 2026 Fonseca Research Group</p>
+        <div class="footer-divider"></div>
+        <p class="footer-credit">Made with <span class="footer-heart">&#10084;</span> + AI by Gaurab Subedi</p>
     </footer>
 
     {% block extra_scripts %}{% endblock %}
